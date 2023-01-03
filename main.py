@@ -5,6 +5,8 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from init_driver_selenium import init_webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+
 import pandas as pd
 
 
@@ -17,18 +19,19 @@ def scroll(driver):
     count_rows = len(rows)
 
     ActionChains(driver) \
-        .scroll_to_element(rows[count_rows-1])\
+        .scroll_to_element(rows[-1])\
         .perform()
 
     time.sleep(1)
     while count_rows < len(driver.find_element(By.CLASS_NAME, 'table-list').find_elements(By.CLASS_NAME, 'row')):
         rows = driver.find_element(By.CLASS_NAME, 'table-list').find_elements(By.CLASS_NAME, 'row')
-        count_rows = len(rows)
+        time.sleep(2)
         ActionChains(driver) \
-            .scroll_to_element(rows[count_rows-1]) \
+            .scroll_to_element(rows[-1]) \
             .send_keys(Keys.PAGE_DOWN)\
             .perform()
-        time.sleep(1.5)
+        # WebDriverWait(driver, timeout=10).until(document_initialised)
+        count_rows = len(rows)
 
 
 def parse_page(driver):
@@ -79,7 +82,7 @@ def main(driver):
         data = pd.concat([data, df], ignore_index=True)
         print(f'------- download {category} {len(df)} items done -------')
         time.sleep(1)
-    data.to_csv(f'data{datetime.date.today().strftime("%d-%m-%Y")}.csv')
+    data.to_csv(f'data\data{datetime.date.today().strftime("%d-%m-%Y")}.csv')
     print(f'count items -  {len(data)}')
 
 
