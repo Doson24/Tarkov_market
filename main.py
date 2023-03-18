@@ -11,15 +11,20 @@ import pandas as pd
 
 
 def perform_scroll(driver):
-    WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')))
+    try:
+        WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')))
+    except Exception as ex:
+        print(ex)
     # driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')
     rows1 = driver.find_element(By.CLASS_NAME, 'table-list').find_elements(By.CLASS_NAME, 'row')
     count_rows = len(rows1)
 
     driver.implicitly_wait(2)
     time.sleep(3)
-
-    driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10').send_keys(Keys.ENTER)
+    try:
+        driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10').send_keys(Keys.ENTER)
+    except Exception as ex:
+        print(ex)
 
     time.sleep(3)
 
@@ -91,14 +96,14 @@ def main(driver):
         df = parse_page(driver)
         df['category'] = category
         data = pd.concat([data, df], ignore_index=True)
-        print(f'------- download {category} {len(df)} items done -------')
+        print(f'[+] Download {category} {len(df)} items done')
         time.sleep(1)
     data.to_csv(f'data\data{datetime.date.today().strftime("%H-%d-%m-%Y")}.csv')
     print(f'count items -  {len(data)}')
 
 
 if __name__ == '__main__':
-    driver = init_webdriver(headless=False)
+    driver = init_webdriver(headless=True)
     start_time = time.time()
     main(driver)
     driver.quit()
