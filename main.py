@@ -11,30 +11,15 @@ import pandas as pd
 
 
 def perform_scroll(driver):
-    el_download = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')))
+    WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')))
     # driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')
     rows1 = driver.find_element(By.CLASS_NAME, 'table-list').find_elements(By.CLASS_NAME, 'row')
     count_rows = len(rows1)
 
     driver.implicitly_wait(2)
-
-    # ActionChains(driver) \
-    #     .scroll_to_element(el_download) \
-    #     .click(el_download)\
-    #     .send_keys(Keys.PAGE_DOWN) \
-    #     .perform()
-
-    # el_download.send_keys(Keys.ENTER)
-
-    # ActionChains(driver) \
-    #     .send_keys(Keys.PAGE_DOWN) \
-    #     .perform()
-
-    # rows2 = driver.find_element(By.CLASS_NAME, 'table-list').find_elements(By.CLASS_NAME, 'row')
-    # count_rows = len(rows2)
     time.sleep(3)
+
     driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10').send_keys(Keys.ENTER)
-    # el_download.click()
 
     time.sleep(3)
 
@@ -47,8 +32,8 @@ def perform_scroll(driver):
             .scroll_to_element(rows[-1]) \
             .send_keys(Keys.PAGE_DOWN)\
             .perform()
-
         driver.implicitly_wait(2)
+        time.sleep(3)
 
 
 def get_rows_el(driver):
