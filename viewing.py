@@ -1,7 +1,7 @@
 import datetime
 import os
-from collections import OrderedDict
 import pandas as pd
+from collections import OrderedDict
 
 
 def search_files(path: str) -> list:
@@ -23,7 +23,10 @@ filenames = search_files('data')
 dict_of_df = OrderedDict(('data/'+f, pd.read_csv('data/'+f, parse_dates=['Date'])) for f in filenames)
 
 df = pd.concat(dict_of_df, sort=True)
-pr = df[df.Name == 'Ключ от номера 220 западного крыла Санатория']
-pr = pr.sort_values('Date')
 
-print(pr.avg_price_24h)
+while True:
+    name = input('Введите название предмета: ')
+    pr = df[df.Name == name]
+    #df.ц
+    # pr = pr.sort_values('Date')
+    print(pr[['avg_price_24h', 'price_sell_trader', 'name_trader']])
