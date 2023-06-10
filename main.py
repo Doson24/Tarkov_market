@@ -8,13 +8,15 @@ from init_driver_selenium import init_webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
+from pathlib import Path
 
 
 def perform_scroll(driver):
     try:
         WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')))
     except Exception as ex:
-        print(ex)
+        print('[Error]Кнопка "Загрузить еще" не найдена')
+
     # driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10')
     rows1 = driver.find_element(By.CLASS_NAME, 'table-list').find_elements(By.CLASS_NAME, 'row')
     count_rows = len(rows1)
@@ -24,7 +26,8 @@ def perform_scroll(driver):
     try:
         driver.find_element(By.CLASS_NAME, 'big.bold.w-100.text-center.py-10').send_keys(Keys.ENTER)
     except Exception as ex:
-        print(ex)
+        # print(ex)
+        pass
 
     time.sleep(3)
 
@@ -35,7 +38,7 @@ def perform_scroll(driver):
 
         ActionChains(driver) \
             .scroll_to_element(rows[-1]) \
-            .send_keys(Keys.PAGE_DOWN)\
+            .send_keys(Keys.PAGE_DOWN) \
             .perform()
         driver.implicitly_wait(2)
         time.sleep(3)
@@ -80,7 +83,9 @@ def parse_page(driver):
 
 def main(driver):
     base_url = 'https://tarkov-market.com/ru/tag/'
-    categories = ['keys', 'barter', 'containers', 'provisions', 'gear', 'meds',
+    #
+    categories = ['keys',
+                  'barter', 'containers', 'provisions', 'gear', 'meds',
                   'sights', 'suppressors', 'weapon', 'ammo', 'magazines', 'tactical_devices',
                   'weapon_parts', 'special_equipment', 'maps', 'ammo_boxes', 'repair']
     driver.set_window_size(1920, 1080)
@@ -98,7 +103,9 @@ def main(driver):
         data = pd.concat([data, df], ignore_index=True)
         print(f'[+] Download {category} {len(df)} items done')
         time.sleep(1)
-    data.to_csv(f'data\data{datetime.date.today().strftime("%H-%d-%m-%Y")}.csv')
+    # path = Path(f'data\\data{datetime.date.today().strftime("%H-%d-%m-%Y")}.csv')
+    path = f'C:\\Users\\user\\Desktop\\Projects\\Tarkov_market\\data\\data{datetime.date.today().strftime("%H-%d-%m-%Y")}.csv'
+    data.to_csv(path)
     print(f'count items -  {len(data)}')
 
 
@@ -108,4 +115,4 @@ if __name__ == '__main__':
     main(driver)
     driver.quit()
     print("--- %s seconds ---" % (time.time() - start_time))
-    time.sleep(30)
+    # time.sleep(30)
