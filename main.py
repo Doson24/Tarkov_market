@@ -8,7 +8,9 @@ from init_driver_selenium import init_webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
+from selenium.common.exceptions import TimeoutException
 from pathlib import Path
+from SQlLite import SQLite_operations
 
 
 def perform_scroll(driver):
@@ -71,7 +73,7 @@ def parse_page(driver):
         names_trader.append(name_trader)
 
     return pd.DataFrame({
-        'Date': datetime.date.today().strftime('%H-%d-%m-%Y'),
+        'Date': datetime.date.today().strftime('%d-%m-%Y'),
         'Name': names,
         'avg_price_24h': avg_prices24h,
         'change_24h': changes_24h,
@@ -93,7 +95,10 @@ def main(driver):
     driver.get('https://tarkov-market.com/ru')
     time.sleep(6)
     for category in categories:
-        driver.get(base_url + category)
+        try:
+            driver.get(base_url + category)
+        except TimeoutException:
+            continue
 
         driver.implicitly_wait(1)
 
@@ -102,7 +107,12 @@ def main(driver):
         df['category'] = category
         data = pd.concat([data, df], ignore_index=True)
         print(f'[+] Download {category} {len(df)} items done')
+
+        db = 'Tarkov.db'
+        conn = SQLite_operations(db, category)
+        conn.add_data(df)
         time.sleep(1)
+
     # path = Path(f'data\\data{datetime.date.today().strftime("%H-%d-%m-%Y")}.csv')
     path = f'C:\\Users\\user\\Desktop\\Projects\\Tarkov_market\\data\\data{datetime.date.today().strftime("%H-%d-%m-%Y")}.csv'
     data.to_csv(path)
